@@ -1,0 +1,203 @@
+\documentclass[11pt,a4paper]{article}
+
+%----------------------------------------------------------------------------------------
+%   PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsthm, amsfonts}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in, top=25mm, bottom=25mm}
+
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage{background}
+\usepackage{hyperref}
+\usepackage{fontawesome}
+
+%----------------------------------------------------------------------------------------
+%   COLOR DEFINITIONS
+%----------------------------------------------------------------------------------------
+
+\definecolor{UMBlue}{RGB}{0,39,76}
+\definecolor{UMMaize}{RGB}{255,203,5}
+\definecolor{LightGray}{RGB}{245,245,245}
+\definecolor{BoxBlue}{RGB}{220,235,245}
+\definecolor{AccentYellow}{RGB}{255,240,200}
+
+%----------------------------------------------------------------------------------------
+%   PAGE STYLING
+%----------------------------------------------------------------------------------------
+
+\backgroundsetup{
+contents={},
+color=LightGray,
+opacity=0.1,
+scale=1,
+angle=0
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[L]{\textcolor{UMBlue}{\large\textbf{Graphical Models Worksheet}}}
+\fancyhead[R]{\textcolor{UMBlue}{\large\textbf{Esubalew C. Muluye}}}
+\fancyfoot[C]{\textcolor{UMBlue}{\thepage}}
+
+%----------------------------------------------------------------------------------------
+%   CUSTOM ENVIRONMENTS
+%----------------------------------------------------------------------------------------
+
+\newtcolorbox{exercisebox}[1]{
+    breakable,
+    enhanced,
+    colback=BoxBlue,
+    colframe=UMBlue,
+    title=#1,
+    fonttitle=\bfseries\large\color{UMBlue},
+    attach title to upper,
+    boxrule=1pt,
+    arc=4pt,
+    before skip=12pt,
+    after skip=12pt,
+    overlay unbroken and first={
+        \node[anchor=north east] at (frame.north east) 
+            {\color{UMBlue!60!white}\scalebox{1.5}{\faPencil}};
+    }
+}
+
+\newenvironment{solution}
+    {\par\medskip\noindent\textbf{\color{UMBlue}Solution}\quad\color{DarkGray}}
+    {\par\medskip}
+
+%----------------------------------------------------------------------------------------
+%   TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{\sffamily\bfseries\Huge Worksheet 1: Graphical Models \\ 
+\Large Solutions \vspace{-0.2cm}}
+\author{\sffamily\Large Esubalew Chekol Muluye \\ \small ID: GSR/6451/17}
+\date{\sffamily\today}
+
+%----------------------------------------------------------------------------------------
+%   DOCUMENT CONTENT
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{-1cm}
+\begin{center}
+\rule{0.8\textwidth}{0.5pt}
+\end{center}
+
+\clearpage
+
+\begin{exercisebox}{Exercise 3: Factorization \& Independence}
+Let $X, Y, Z$ be three disjoint subsets of variables such that $x = X \cup Y \cup Z$. Prove that $P \models (X \indep Y | Z)$ if and only if we can write $P$ in the form: $P(x) = P(X,Y,Z) = \phi_1(X,Z) \cdot \phi_2(Y,Z)$.
+
+\begin{solution}
+\textbf{Forward Direction ($\Rightarrow$):}
+\begin{align*}
+P(X,Y,Z) &= \condprob{X,Y}{Z}P(Z) \\
+&= \condprob{X}{Z}\condprob{Y}{Z}P(Z) \quad \text{(by independence)} \\
+&= \underbrace{\condprob{X}{Z}}_{\phi_1(X,Z)} \cdot \underbrace{\condprob{Y}{Z}P(Z)}_{\phi_2(Y,Z)}
+\end{align*}
+
+\textbf{Reverse Direction ($\Leftarrow$):}
+\begin{align*}
+\condprob{X}{Y,Z} &= \frac{\phi_1(X,Z)\phi_2(Y,Z)}{\sum_X \phi_1(X,Z)\phi_2(Y,Z)} \\
+&= \frac{\phi_1(X,Z)}{\sum_X \phi_1(X,Z)} = \condprob{X}{Z}
+\end{align*}
+Thus $X \indep Y | Z$ holds.
+\end{solution}
+\end{exercisebox}
+
+\begin{exercisebox}{Exercise 4: Reasoning by Cases}
+Prove: $\condprob{X}{Y} = \sum_z \condprob{X, Z=z}{Y}$ using chain rule and conditional probability properties.
+
+\begin{solution}
+Using law of total probability:
+\begin{align*}
+\condprob{X}{Y} &= \sum_z \condprob{X,Z=z}{Y} \\
+&= \sum_z \frac{\prob{X,Y,Z=z}}{\prob{Y}} \\
+&= \frac{1}{\prob{Y}} \sum_z \prob{X,Y,Z=z} \\
+&= \frac{\prob{X,Y}}{\prob{Y}} = \condprob{X}{Y}
+\end{align*}
+\end{solution}
+\end{exercisebox}
+
+\begin{exercisebox}{Exercise 5: Conditional Independence Properties}
+Let $W, X, Y, Z$ be sets of random variables.
+
+\subsection*{(a) Weak Union \& Contraction}
+Prove: $(X \indep Y,W | Z) \Rightarrow (X \indep Y | Z,W)$ and contraction property.
+
+\subsection*{(b) Intersection Property}
+Prove for positive distributions: $(X \indep Y | Z,W) \land (X \indep W | Z,Y) \Rightarrow (X \indep Y,W | Z)$
+
+\subsection*{(c) Counterexample}
+Provide non-positive distribution counterexample for intersection property.
+
+\begin{solution}
+\textbf{(a) Weak Union:}
+\begin{align*}
+\condprob{X}{Y,Z,W} &= \condprob{X}{Z} \quad \text{(given)} \\
+&= \condprob{X}{Z,W} \quad \text{(by decomposition)}
+\end{align*}
+
+\textbf{Contraction:} Combine two independence statements through:
+\begin{align*}
+\condprob{X}{Y,W,Z} &= \condprob{X}{Y,Z} \quad \text{(given)} \\
+&= \condprob{X}{Z} \quad \text{(given)}
+\end{align*}
+
+\textbf{(b) Intersection:} Use positivity to show:
+\begin{align*}
+\condprob{X}{Z,W} &= \condprob{X}{Z,Y} \\
+\Rightarrow \condprob{X}{Z} &= \condprob{X}{Z,Y} \Rightarrow (X \indep Y | Z)
+\end{align*}
+
+\textbf{(c) Counterexample:} Construct distribution where:
+\begin{itemize}
+\item $X=Y=W$ with $P(Z=0)=1$
+\item $(X \indep Y | W,Z)$ and $(X \indep W | Y,Z)$ hold
+\item But $(X \indep Y,W | Z)$ fails
+\end{itemize}
+\end{solution}
+\end{exercisebox}
+
+\begin{exercisebox}{Exercise 6: Markov Inequality}
+Prove: For non-negative RV $X$ and $t > 0$, $\prob{X \geq t} \leq \frac{\expect{X}}{t}$.
+
+\begin{solution}
+Define indicator $I_{X \geq t}$:
+\begin{align*}
+\expect{X} &\geq \expect{tI_{X \geq t}} \\
+&= t\prob{X \geq t} \\
+\Rightarrow \prob{X \geq t} &\leq \frac{\expect{X}}{t}
+\end{align*}
+\end{solution}
+\end{exercisebox}
+
+\begin{exercisebox}{Exercise 7: Chebyshev's Inequality}
+Prove using Markov: $\prob{|X-\mu| \geq k} \leq \frac{\sigma^2}{k^2}$.
+
+\begin{solution}
+Apply Markov to $Y = (X-\mu)^2$:
+\begin{align*}
+\prob{Y \geq k^2} &\leq \frac{\expect{Y}}{k^2} \\
+\prob{(X-\mu)^2 \geq k^2} &\leq \frac{\sigma^2}{k^2} \\
+\prob{|X-\mu| \geq k} &\leq \frac{\sigma^2}{k^2}
+\end{align*}
+\end{solution}
+\end{exercisebox}
+
+\end{document}
